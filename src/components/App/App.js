@@ -52,13 +52,10 @@ class App extends Component {
             <div className="app-container">
                 <div className="content">
                     <div className="filters">
-                        <h1>Filter</h1>
                         Hotel name
                         <input type="text" />
-                        Price min
-                        <select></select>
-                        Price max
-                        <select></select>
+                        Price
+                        <button>sort</button>
                     </div>
                     <div className="hotel-list">
                     <img src={this.state.mockData.hotelStaticContent.mainImage.url} className="photo"/>

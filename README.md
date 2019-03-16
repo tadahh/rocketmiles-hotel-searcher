@@ -1,14 +1,9 @@
-# Rocketmiles Frontend Homework (React)
+# Rocketmiles - React Technical Assesment
 
-## Getting started
+## Development server
 
-```bash
-# Install dependencies
-npm install
+Run `npm start` for a dev server. Navigate to `http://localhost:1234`. The app will automatically reload if you change any of the source files.
 
-# Run devlopment server
-npm start
+## Running unit tests
 
-# Run tests
-npm test
-```
+Run `npm test` to execute the unit tests via [Jest](https://jestjs.io/) and [Enzyme](https://airbnb.io/enzyme/).
