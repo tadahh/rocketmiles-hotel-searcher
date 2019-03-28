@@ -1,11 +1,8 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import App from './App';
-import Filters from '../Filters';
-import HotelList from '../HotelList';
-import axios from 'axios';
-
-jest.mock('axios');
+import { shallow, mount } from 'enzyme';
+import HotelList from './HotelList';
+import Loader from './Loader';
+import Error from './Error';
 
 const hotelData = [
     {
@@ -53,26 +50,17 @@ const hotelData = [
     }
 ];
 
-describe('App', () => {
+describe('HotelList', () => {
     it('should mount Loader in a full DOM', function() {
-        expect(mount(<App />).length).toBe(1);
+        expect(mount(<Loader />).length).toBe(1);
     });
 
-    it('should fetch a list of hotel data', () => {
-        axios.get.mockImplementation(() =>
-            Promise.resolve({ data: hotelData }).then(resp =>
-                expect(resp.data).toEqual(hotelData)
-            )
-        );
-
-        axios.get.mockReset();
+    it('should mount Error in a full DOM', function() {
+        expect(mount(<Error />).length).toBe(1);
     });
 
-    it('should mount Filters in a full DOM', function() {
-        expect(mount(<Filters />).length).toBe(1);
-    });
-
-    it('should mount HotelList in a full DOM', function() {
-        expect(mount(<HotelList hotelData={hotelData} />).length).toBe(1);
+    it('accepts hotelData props', () => {
+        const wrapper = mount(<HotelList hotelData={hotelData} />);
+        expect(wrapper.props().hotelData).toEqual(hotelData);
     });
 });

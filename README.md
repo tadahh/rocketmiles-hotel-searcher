@@ -1,4 +1,8 @@
-# Rocketmiles - React Technical Assesment
+# Rocketmiles - React Technical Assesment - Completed by Tadas Jodwalis
+
+## Install Dependencies
+
+`npm install`
 
 ## Development server
 

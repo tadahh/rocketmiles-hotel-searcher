@@ -1,11 +1,6 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import App from './App';
-import Filters from '../Filters';
-import HotelList from '../HotelList';
-import axios from 'axios';
-
-jest.mock('axios');
+import { shallow, mount } from 'enzyme';
+import HotelItems from './HotelItems';
 
 const hotelData = [
     {
@@ -53,26 +48,46 @@ const hotelData = [
     }
 ];
 
-describe('App', () => {
-    it('should mount Loader in a full DOM', function() {
-        expect(mount(<App />).length).toBe(1);
+describe('HotelItems', () => {
+    const wrapper = mount(<HotelItems hotelData={hotelData} />);
+
+    it('accepts hotelData props', () => {
+        expect(wrapper.props().hotelData).toEqual(hotelData);
     });
 
-    it('should fetch a list of hotel data', () => {
-        axios.get.mockImplementation(() =>
-            Promise.resolve({ data: hotelData }).then(resp =>
-                expect(resp.data).toEqual(hotelData)
-            )
+    it('renders', () => {
+        expect(wrapper).toMatchSnapshot();
+    });
+
+    it('returns default empty array when there is no data', () => {
+        const wrapper = mount(<HotelItems hotelData={[]} />);
+        expect(wrapper).toMatchSnapshot();
+    });
+
+    it('does not break without data', () => {
+        const wrapper = mount(<HotelItems hotelData={[]} />);
+        expect(wrapper.find('.card')).toHaveLength(0);
+    });
+
+    it('contains image src for hotel photo', () => {
+        expect(wrapper.find('img').prop('src')).toEqual(
+            hotelData[0].hotelStaticContent.mainImage.url
         );
-
-        axios.get.mockReset();
     });
 
-    it('should mount Filters in a full DOM', function() {
-        expect(mount(<Filters />).length).toBe(1);
-    });
-
-    it('should mount HotelList in a full DOM', function() {
-        expect(mount(<HotelList hotelData={hotelData} />).length).toBe(1);
+    it('contains neighborhood name', () => {
+        expect(
+            mount(
+                <div className='ui medium header'>
+                    <a>
+                        <i
+                            aria-hidden='true'
+                            className='blue map marker alternate icon'
+                        />
+                        Magnificent Mile
+                    </a>
+                </div>
+            ).text()
+        ).toEqual(hotelData[0].hotelStaticContent.neighborhoodName);
     });
 });

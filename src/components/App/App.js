@@ -1,83 +1,88 @@
-import React, { Component } from 'react';
-import './style.less';
+import React, { useState, useEffect } from 'react';
+import { Container } from 'semantic-ui-react';
+import axios from 'axios';
+import Filters from '../Filters';
+import HotelList from '../HotelList';
 
-class App extends Component {
-    state = {
-        mockData: {
-            id: '907',
-            rewards: {
-                miles: 10000
-            },
-            lowestAveragePrice: {
-                currency: 'USD',
-                symbol: '&#36;',
-                amount: 579
-            },
-            hotelStaticContent: {
-                hotelId: 907,
-                languageCode: 'en',
-                mainImage: {
-                    category: 'EXTERIOR',
-                    url: 'http://d2whcypojkzby.cloudfront.net/imageRepo/2/0/68/56/314/ExteriorCarsGone_S.jpg',
-                    source: 'VFML'
-                },
-                name: 'Omni Chicago Hotel & Suites Magnificent Mile',
-                neighborhoodName: 'Magnificent Mile',
-                address: {
-                    line1: '676 North Michigan Avenue',
-                    line2: null,
-                    city: 'Chicago',
-                    stateName: 'Illinois',
-                    stateCode: 'IL',
-                    countryName: 'United States',
-                    countryCode: 'US',
-                    zipCode: '60611',
-                    latitude: 41.89475,
-                    longitude: -87.62465,
-                    timeZoneId: 'America/Chicago'
-                },
-                stars: 4,
-                rating: 9,
-                numberOfReviews: 685,
-                brandCode: '1324',
-                brandName: 'Omni Hotels',
-                propertyType: 204,
-                propertyTypeName: 'Hotel'
+const App = () => {
+    const [hotelData, setHotelData] = useState([]);
+    const [filteredHotelData, setFilteredHotelData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            setIsError(false);
+
+            try {
+                const result = await axios(
+                    'https://homework-app.rocketmiles.com/fe-homework/rates'
+                );
+
+                setHotelData(result.data.results.hotels);
+                setFilteredHotelData(result.data.results.hotels);
+                setIsLoading(false);
+            } catch (error) {
+                setIsError(true);
+                disableInputs();
+                setIsLoading(false);
             }
-        }
-    }
+        };
 
-    render() {
-        return (
-            <div className="app-container">
-                <div className="content">
-                    <div className="filters">
-                        Hotel name
-                        <input type="text" />
-                        Price
-                        <button>sort</button>
-                    </div>
-                    <div className="hotel-list">
-                    <img src={this.state.mockData.hotelStaticContent.mainImage.url} className="photo"/>
-                    <div className="details">
-                        <div>
-                            {this.state.mockData.hotelStaticContent.name}
-                        </div>
-                        <div>
-                            {this.state.mockData.hotelStaticContent.neighborhoodName}
-                        </div>
-                    </div>
-                    <div className="price">
-                        {this.state.mockData.lowestAveragePrice.symbol}
-                        {this.state.mockData.lowestAveragePrice.amount}
-                        {this.state.mockData.rewards.miles}
-                        <button>Select</button>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-}
+        fetchData();
+    }, []);
+
+    const disableInputs = () => {
+        document.querySelector('input').setAttribute('disabled', '');
+        document.querySelector('.dropdown').setAttribute('disabled', '');
+    };
+
+    const filterHotelList = input => {
+        setFilteredHotelData(
+            hotelData.filter(hotel => {
+                return hotel.hotelStaticContent.name
+                    .toLowerCase()
+                    .includes(input);
+            })
+        );
+    };
+
+    const orderHotelListByPrice = orderType => {
+        if (orderType === 'Ascending') {
+            filteredHotelData.sort((hotel1, hotel2) => {
+                return (
+                    hotel1.lowestAveragePrice.amount -
+                    hotel2.lowestAveragePrice.amount
+                );
+            });
+        } else if (orderType === 'Descending') {
+            filteredHotelData.sort((hotel1, hotel2) => {
+                return (
+                    hotel2.lowestAveragePrice.amount -
+                    hotel1.lowestAveragePrice.amount
+                );
+            });
+        }
+
+        setFilteredHotelData([...filteredHotelData]);
+    };
+
+    return (
+        <Container>
+            <>
+                <Filters
+                    filterHotelList={filterHotelList}
+                    orderHotelListByPrice={orderHotelListByPrice}
+                />
+                <HotelList
+                    hotelData={filteredHotelData}
+                    isError={isError}
+                    isLoading={isLoading}
+                />
+            </>
+        </Container>
+    );
+};
 
 export default App;

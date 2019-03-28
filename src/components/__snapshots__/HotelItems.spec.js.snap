@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HotelItems renders 1`] = `ReactWrapper {}`;
+
+exports[`HotelItems returns default empty array when there is no data 1`] = `ReactWrapper {}`;
